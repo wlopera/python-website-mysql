@@ -1,0 +1,71 @@
+{% include 'admin/header.html' %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">
+                    Datos del libro
+                </div>
+                <div class="card-body">
+                    <form action="/admin/books/save" method="post" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label for="txtName" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" name="txtName" id="txtName" placeholder="Escriba el nombre del libro">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="txtImage" class="form-label">Imagen:</label>
+                            <input type="file" class="form-control" name="txtImage" id="txtImage" placeholder="Seleccionar imagen">
+                       </div>
+
+                        <div class="mb-3">
+                            <label for="txtUrl" class="form-label">URL Descarga:</label>
+                            <input type="text" class="form-control" name="txtUrl" id="txtUrl" placeholder="Escriba la url de  descarga">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+                <div class="card-footer text-muted">                    
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+<div class="table-responsive">
+    
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Imagen</th>
+                <th scope="col">URL</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr class="">
+                <td scope="row">{{ book[0] }}</td>
+                <td>{{ book[1] }}</td>
+                <td>{{ book[2] }}</td>
+                <td>{{ book[3] }}</td>
+                <td>
+                    <form action="/admin/books/delete" method="post">
+                        <input type="text" name="txtID" id="txtID" value={{ book[0] }}>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor%}            
+        </tbody>
+    </table>
+</div>
+
+        </div>
+        
+    </div>
+</div>
+{% include 'admin/footer.html' %}
