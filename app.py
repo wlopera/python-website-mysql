@@ -1,6 +1,21 @@
 from flask import Flask
+
+# Renderizado de vistas
+# Consultar peticiones y redireccionar vistas
 from flask import render_template, request, redirect
+
+# Consultar informacion de una imagen
+from flask import send_from_directory
+
+# Conexion y operaciones a la DB MySql
 from flaskext.mysql import MySQL
+
+# Consulta de fechas
+from datetime import datetime
+
+# Impoirtar manejo de archivos
+import os
+
 
 app=Flask(__name__)
 
@@ -17,6 +32,11 @@ mysql.init_app(app)
 @app.route('/')
 def inicio():
     return render_template('site/index.html')
+
+@app.route('/img/<image>')
+def image(image):
+    # print(image)
+    return send_from_directory(os.path.join('templates/site/img'), image)
 
 @app.route('/books')
 def books():
@@ -45,7 +65,7 @@ def admin_books():
     connection.commit()
     
     data=cursor.fetchall()
-    print(data)
+    # print(data)
     
     return render_template('admin/books.html', books=data)
 
@@ -53,18 +73,24 @@ def admin_books():
 @app.route('/admin/books/save', methods=['POST'])
 def admin_books_save():
     _name=request.form['txtName']
-    _image=request.files['txtImage']
+    _file=request.files['txtImage']
     _url=request.form['txtUrl']
     
+    time=datetime.now()
+    currentTime=time.strftime("%Y%H%M%S")
+    if _file.filename!="":
+        newFilename=currentTime+"_"+_file.filename
+        _file.save("sitioweb/templates/site/img/"+newFilename)
+            
     # print(_name)
     # print(_url)
-    # print(_image)
+    # print(_file)
     
     # sql="INSERT INTO `libros` (`id`, `nombre`, `imagen`, `url`) VALUES (NULL, 'php', 'imagen.png', 'http://php.org');"
     # sql="INSERT INTO libros VALUES(NULL,?,?,?)"
     sql="INSERT INTO libros (id, nombre, imagen, url) VALUES (NULL,%s,%s,%s);"
     
-    data=_name, _image.filename, _url
+    data=_name, newFilename, _url
 
     connection=mysql.connect()
     cursor=connection.cursor()
@@ -81,13 +107,16 @@ def admin_books_delete():
     _id=request.form['txtID']
     # print(_id)
     
-    # connection=mysql.connect()
-    # cursor=connection.cursor()
-    # cursor.execute("SELECT * FROM libros WHERE id=%s", (_id))
-    # connection.commit()
+    connection=mysql.connect()
+    cursor=connection.cursor()
+    cursor.execute("SELECT imagen FROM libros WHERE id=%s", (_id))
+    connection.commit()
     
-    # data=cursor.fetchall()
-    # print(data)
+    data=cursor.fetchall()
+    
+    # Borrar imagen del repo
+    if os.path.exists("sitioweb/templates/site/img/"+str(data[0][0])):
+        os.unlink("sitioweb/templates/site/img/"+str(data[0][0]))
     
     connection=mysql.connect()
     cursor=connection.cursor()
