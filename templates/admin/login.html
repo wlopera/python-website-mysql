@@ -23,6 +23,11 @@
                 <div class="col-md-4">                   
                 </div>
                 <div class="col-md-4">
+                  {% if message %}                    
+                    <div class="alert alert-danger" role="alert">
+                      <strong>{{ message }}</strong>
+                    </div>                    
+                  {% endif %}
                     <div class="card">
                         <div class="card-header">
                             Inicio desSesión
@@ -37,7 +42,7 @@
                                 </div>
                                 <div class="mb-3">
                                   <label for="txtPassword" class="form-label">Contraseña:</label>
-                                  <input type="text"
+                                  <input type="password"
                                     class="form-control" name="txtPassword" id="txtPassword" aria-describedby="helpId" placeholder="Ingrese su contraseña">
                                 </div>
 
