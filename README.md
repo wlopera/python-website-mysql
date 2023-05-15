@@ -1,6 +1,20 @@
 # python-website-mysql
 APP Python WebSite y MySql
 
+## Librerias utilizadas
+* from flask import Flask
+* from flask import render_template, request, redirect, session, url_for (Consultar peticiones y redireccionar vistas)
+* from flask import send_from_directory (Consultar informacion de una imagen)
+* from flaskext.mysql import MySQL (Conexion y operaciones a la DB MySql)
+* from datetime import datetime (Consulta de fechas)
+* import os (Impoirtar manejo de archivos)
+
+
+## Link utilizados
+* https://pixabay.com/
+* https://bootswatch.com/ 
+* bootstrap 5
+
 ### Estrutura del proyecto
 ![Captura](https://github.com/wlopera/react_bakery_pwa_app/assets/7141537/5a3cef42-13b4-4b94-901e-ebd909825622)
 
