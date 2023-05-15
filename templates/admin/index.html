@@ -1,7 +1,7 @@
 {% include 'admin/header.html' %}
     <div class="p-5 mb-4 bg-light rounded-3">
         <div class="container-fluid py-5">
-          <h1 class="display-5 fw-bold">Bienvenido al Administrador del sitio</h1>
+          <h1 class="display-5 fw-bold">Bienvenido <strong>{{ session['user'] }}</strong> a administrar el sitio web</h1>
           <p class="col-md-8 fs-4">Aqui podra administrar los libros del sitio web.</p>
           <hr>
           <a class="btn btn-primary btn-lg" href="/admin/books" role="button">Empezar la gestión</a>          

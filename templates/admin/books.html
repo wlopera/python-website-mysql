@@ -3,6 +3,11 @@
 <div class="container">
     <div class="row">
         <div class="col-md-5">
+           {% if message %}
+            <div class="alert alert-danger" role="alert">
+              <strong>{{message}}</strong>
+            </div>            
+           {% endif %}
             <div class="card">
                 <div class="card-header">
                     Datos del libro
@@ -50,11 +55,15 @@
             <tr class="">
                 <td scope="row">{{ book[0] }}</td>
                 <td>{{ book[1] }}</td>
-                <td>{{ book[2] }}</td>
-                <td>{{ book[3] }}</td>
+                <td>
+                    <img src="/img/{{ book[2] }}" width="60" class="img-fluid rounded-top">
+                    </td>
+                <td>
+                    <a name="" id="" class="btn btn-primary" href="{{ book[3] }}" role="button">Enlace...</a>
+                </td>
                 <td>
                     <form action="/admin/books/delete" method="post">
-                        <input type="text" name="txtID" id="txtID" value={{ book[0] }}>
+                        <input type="hidden" name="txtID" id="txtID" value="{{ book[0] }}">
                         <button type="submit" class="btn btn-danger">Eliminar</button>
                     </form>
                 </td>
