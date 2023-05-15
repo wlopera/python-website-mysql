@@ -2,7 +2,7 @@ from flask import Flask
 
 # Renderizado de vistas
 # Consultar peticiones y redireccionar vistas
-from flask import render_template, request, redirect, session
+from flask import render_template, request, redirect, session, url_for
 
 # Consultar informacion de una imagen
 from flask import send_from_directory
@@ -37,6 +37,11 @@ def inicio():
 def image(image):
     # print(image)
     return send_from_directory(os.path.join('templates/site/img'), image)
+
+@app.route('/css/<filecss>')
+def css_link(filecss):
+    return send_from_directory(os.path.join('static/css/'), filecss)
+    
 
 @app.route('/books')
 def books():
@@ -73,7 +78,7 @@ def admin_login_post():
         session['login']=True
         session['user']="Administrador"
         return redirect("/admin")        
-    return render_template('admin/login.html')
+    return render_template('admin/login.html', message="Acceso denegado")
 
 @app.route('/admin/close')
 def admin_login_close():
@@ -85,7 +90,7 @@ def admin_login_close():
 def admin_books():
     if not 'login' in session:
         return redirect('/admin/login')
-        
+    
     connection=mysql.connect()
     cursor=connection.cursor()
     cursor.execute("SELECT * FROM libros")
@@ -93,6 +98,9 @@ def admin_books():
     
     data=cursor.fetchall()
     # print(data)
+
+    if 'message' in request.args:
+        return render_template('admin/books.html', books=data, message=request.args['message'])        
     
     return render_template('admin/books.html', books=data)
 
@@ -105,6 +113,9 @@ def admin_books_save():
     _name=request.form['txtName']
     _file=request.files['txtImage']
     _url=request.form['txtUrl']
+    
+    if(_name =='' or _file=='' or _url=='' ):
+        return redirect(url_for('.admin_books', message="Debe agregar todos los campos"))
     
     time=datetime.now()
     currentTime=time.strftime("%Y%H%M%S")
