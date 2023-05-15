@@ -2,7 +2,7 @@ from flask import Flask
 
 # Renderizado de vistas
 # Consultar peticiones y redireccionar vistas
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, session
 
 # Consultar informacion de una imagen
 from flask import send_from_directory
@@ -16,8 +16,8 @@ from datetime import datetime
 # Impoirtar manejo de archivos
 import os
 
-
 app=Flask(__name__)
+app.secret_key="develoteca"
 
 #---------------------------Conexión a MySQL
 mysql=MySQL()
@@ -40,7 +40,12 @@ def image(image):
 
 @app.route('/books')
 def books():
-    return render_template('site/books.html')
+    connection=mysql.connect()
+    cursor=connection.cursor()
+    cursor.execute("SELECT * FROM libros")
+    connection.commit()
+    data=cursor.fetchall()   
+    return render_template('site/books.html', books=data)
 
 @app.route('/about')
 def all():
@@ -49,16 +54,38 @@ def all():
 #---------------------------Rutas y menu de administrador
 @app.route('/admin/')
 def admin_index():
+    if not 'login' in session:
+        return redirect('/admin/login')    
     return render_template('admin/index.html')
 
 @app.route('/admin/login')
 def admin_login():
     return render_template('admin/login.html')
 
+@app.route('/admin/login', methods=['POST'])
+def admin_login_post():
+    _user=request.form['txtUser']
+    _password=request.form['txtPassword']
+    # print(_user)
+    # print(_password)
+    
+    if _user=="admin" and _password=="12345":
+        session['login']=True
+        session['user']="Administrador"
+        return redirect("/admin")        
+    return render_template('admin/login.html')
+
+@app.route('/admin/close')
+def admin_login_close():
+    session.clear()
+    return redirect('/admin/login')
+    
 #--------------------------- Funciones de BD
 @app.route('/admin/books')
 def admin_books():
-    
+    if not 'login' in session:
+        return redirect('/admin/login')
+        
     connection=mysql.connect()
     cursor=connection.cursor()
     cursor.execute("SELECT * FROM libros")
@@ -72,6 +99,9 @@ def admin_books():
 """ Guardar Registro """
 @app.route('/admin/books/save', methods=['POST'])
 def admin_books_save():
+    if not 'login' in session:
+        return redirect('/admin/login')
+    
     _name=request.form['txtName']
     _file=request.files['txtImage']
     _url=request.form['txtUrl']
@@ -103,6 +133,9 @@ def admin_books_save():
 
 @app.route('/admin/books/delete', methods=['POST'])
 def admin_books_delete():
+    
+    if not 'login' in session:
+        return redirect('/admin/login')
     
     _id=request.form['txtID']
     # print(_id)
